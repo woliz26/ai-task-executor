@@ -103,7 +103,7 @@ async function setTaskStatusDone(taskId) {
   const list = await listResponse.json();
   const statuses = list.statuses.map(s => s.status.toLowerCase());
 
-  const desiredStatuses = ['done', 'complete', 'completed', 'closed'];
+  const desiredStatuses = ['done', 'complete', 'completed', 'closed', 'achevé'];
   let matchedStatus = null;
   for (const ds of desiredStatuses) {
     const found = list.statuses.find(s => s.status.toLowerCase() === ds);
