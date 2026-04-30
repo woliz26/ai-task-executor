@@ -1,11 +1,10 @@
-// server.js - Entry point + scheduler
-
-require('dotenv').config();
+require('dotenv').config({ path: 'C:/startup/.env' });
 const cron = require('node-cron');
 const fastify = require('fastify')({ logger: true });
-const taskHandler = require('./taskHandler');
 const fs = require('fs');
 const path = require('path');
+const { getListByName, getTasks, appendToDescription, setTaskStatusDone } = require('./clickup');
+const { handleTask } = require('./taskHandler');
 
 const processedFilePath = path.join(__dirname, 'processed.json');
 
@@ -23,17 +22,14 @@ function saveProcessedTasks() {
 }
 
 async function pollTasks() {
-  const ClickUp = require('./clickup'); // We'll implement clickup.js wrapper with built-in skill
-  const clickup = new ClickUp(process.env.CLICKUP_API_TOKEN, process.env.CLICKUP_LIST_ID);
-
   try {
-    const allTasks = await clickup.getTasks();
+    const allTasks = await getTasks();
     const newAITasks = allTasks.filter(task => 
       task.name.toLowerCase().includes('ai') && !processedTasks.includes(task.id)
     );
 
     for (const task of newAITasks) {
-      await taskHandler.handleTask(task);
+      await handleTask(task);
       processedTasks.push(task.id);
       saveProcessedTasks();
     }
@@ -61,8 +57,8 @@ fastify.get('/status', async (request, reply) => {
 // Start server
 const start = async () => {
   try {
-    await fastify.listen({ port: 3000 });
-    console.log('Server listening on http://localhost:3000');
+    await fastify.listen({ port: 5000 });
+    console.log('Server listening on http://localhost:5000');
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

@@ -1,0 +1,1 @@
+Create a professional README.md for the ai-task-executor project. Include: project description, how it works, setup instructions, environment variables needed, and example ClickUp task format.
