@@ -1,0 +1,1 @@
+Read all the files inside C:\startup\projects\daily-tracker\, understand what the project does, and write a summary report saved as report.md in C:\startup\projects\ai-task-executor\outputs\.
