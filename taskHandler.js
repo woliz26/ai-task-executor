@@ -13,43 +13,121 @@ async function handleTask(task) {
 
   const title = task.name;
   const description = task.description || '';
-  let summary = '';
-  let outputFiles = [];
 
-  // Parse the description to find instructions
-  if (/create a file named ([^\s]+) with content:(.*)/is.test(description)) {
-    const match = description.match(/create a file named ([^\s]+) with content:(.*)/is);
-    const filename = match[1].trim();
-    const content = match[2].trim();
-    const filepath = path.resolve(__dirname, filename);
-    fs.mkdirSync(path.dirname(filepath), { recursive: true });
-    fs.writeFileSync(filepath, content);
-    summary = `Created file ${filename}`;
-    outputFiles.push({ path: filepath, content });
-  } else if (/write node\.js script named ([^\s]+) with content:(.*)/is.test(description)) {
-    const match = description.match(/write node\.js script named ([^\s]+) with content:(.*)/is);
-    const filename = match[1].trim();
-    const content = match[2].trim();
-    const filepath = path.resolve(__dirname, filename);
-    fs.mkdirSync(path.dirname(filepath), { recursive: true });
-    fs.writeFileSync(filepath, content);
-    summary = `Wrote Node.js script ${filename}`;
-    outputFiles.push({ path: filepath, content });
-  } else if (/scan folder ([^\s]+) for files named ([^\s]+)/is.test(description)) {
-    const match = description.match(/scan folder ([^\s]+) for files named ([^\s]+)/is);
-    const folder = path.resolve(__dirname, match[1].trim());
-    const pattern = match[2].trim();
-    const files = fs.readdirSync(folder).filter(f => f.includes(pattern));
-    const outputPath = path.resolve(__dirname, 'scan_results.txt');
-    fs.writeFileSync(outputPath, files.join('\n'));
-    summary = `Scanned folder and listed files matching '${pattern}'`;
-    outputFiles.push({ path: outputPath, content: files.join('\n') });
-  } else {
-    const outputPath = path.resolve(__dirname, 'task_description.txt');
-    fs.writeFileSync(outputPath, description);
-    summary = 'Saved task description as fallback';
-    outputFiles.push({ path: outputPath, content: description });
+  let summary = '';
+let outputFiles = [];
+
+const outputDir = path.join(__dirname, 'outputs', task.id);
+fs.mkdirSync(outputDir, { recursive: true });
+
+function extractFilename(text) {
+  const match = text.match(/([a-zA-Z0-9-_]+\.(js|json|txt|md|html|css))/i);
+  return match ? match[1] : null;
+}
+
+function generateContent(title, description) {
+
+  const text = (title + ' ' + description).toLowerCase();
+
+  // Node.js API
+  if (text.includes('api')) {
+    return {
+      filename: 'generated-api.js',
+      content: `
+        const express = require('express');
+
+        const app = express();
+
+        app.get('/', (req, res) => {
+          res.json({
+            status: 'ok',
+            generated: true
+          });
+        });
+
+        app.listen(3000, () => {
+          console.log('Generated API running');
+        });
+      `
+    };
   }
+
+  // Utility module
+  if (text.includes('utility') || text.includes('helper')) {
+    return {
+      filename: 'utility.js',
+      content: `
+        function helper() {
+          return 'Utility function';
+        }
+
+        module.exports = {
+          helper
+        };
+      `
+    };
+  }
+
+  // JSON config
+  if (text.includes('config')) {
+    return {
+      filename: 'config.json',
+      content: JSON.stringify({
+        generated: true,
+        createdAt: new Date().toISOString(),
+        project: title
+      }, null, 2)
+    };
+  }
+
+  // HTML page
+  if (text.includes('landing page') || text.includes('html')) {
+    return {
+      filename: 'index.html',
+      content: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Generated Page</title>
+          </head>
+          <body>
+            <h1>${title}</h1>
+            <p>${description}</p>
+          </body>
+          </html>
+        `
+    };
+  }
+
+  // Default fallback
+  return {
+    filename: 'task-output.txt',
+    content: `
+      Task Title:
+      ${title}
+
+      Task Description:
+      ${description}
+    `
+  };
+}
+
+const generated = generateContent(title, description);
+
+const filename =
+  extractFilename(description) ||
+  extractFilename(title) ||
+  generated.filename;
+
+const outputPath = path.join(outputDir, filename);
+
+fs.writeFileSync(outputPath, generated.content);
+
+summary = `Generated ${filename} from task instructions`;
+
+outputFiles.push({
+  path: outputPath
+});
 
   // Update ClickUp task description
   await appendToDescription(task.id, `Task completed: ${summary}`);
@@ -59,7 +137,7 @@ async function handleTask(task) {
   console.log('Available statuses:', statuses);
   const doneStatus = statuses.find(s => s.status.toLowerCase() === 'achevé');
   if (doneStatus) {
-    await setTaskStatusDone(task.id, doneStatus.id);
+    await setTaskStatusDone(task.id);
   } else {
     console.log('Achevé status not found, using default');
     await setTaskStatusDone(task.id);
