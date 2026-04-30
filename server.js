@@ -1,4 +1,5 @@
 require('dotenv').config({ path: 'C:/startup/.env' });
+global.fetch = require('node-fetch');
 const cron = require('node-cron');
 const fastify = require('fastify')({ logger: true });
 const fs = require('fs');

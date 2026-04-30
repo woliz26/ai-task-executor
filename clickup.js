@@ -1,5 +1,6 @@
 require('dotenv').config({ path: 'C:/startup/.env' });
-const fetch = require('node-fetch');
+const fetch = require('node-fetch').default || require('node-fetch');
+console.log('fetch type:', typeof fetch);
 
 const API_TOKEN = process.env.CLICKUP_API_TOKEN;
 const BASE_URL = 'https://api.clickup.com/api/v2';
@@ -153,4 +154,13 @@ async function setTaskStatusDone(taskId) {
   return { status: matchedStatus };
 }
 
-module.exports = { getListByName, getTasks, appendToDescription, setTaskStatusDone };
+async function getStatuses(listId) {
+  const response = await fetch(`${BASE_URL}/list/${listId}`, {
+    headers: { Authorization: API_TOKEN }
+  });
+  if (!response.ok) throw new Error('Failed to fetch list statuses');
+  const data = await response.json();
+  return data.statuses || [];
+}
+
+module.exports = { getListByName, getTasks, appendToDescription, setTaskStatusDone, getStatuses };
