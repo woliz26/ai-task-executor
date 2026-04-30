@@ -1,1 +1,0 @@
-Create an info.txt file in C/Startup/PROJECTS/ai-task-executor/ that includes a summery of the ai-task-executor

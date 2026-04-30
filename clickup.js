@@ -1,25 +1,28 @@
 require('dotenv').config({ path: 'C:/startup/.env' });
-const fetch = require('node-fetch').default || require('node-fetch');
-console.log('fetch type:', typeof fetch);
+console.log('Dynamic fetch using dynamic import');
+async function dynFetch(...args) {
+  const {default: fetch} = await import('node-fetch');
+  return fetch(...args);
+}
 
 const API_TOKEN = process.env.CLICKUP_API_TOKEN;
 const BASE_URL = 'https://api.clickup.com/api/v2';
 
 async function getListByName(listName) {
   const teamsUrl = `${BASE_URL}/team`;
-  const teamsResponse = await fetch(teamsUrl, { headers: { Authorization: API_TOKEN } });
+  const teamsResponse = await dynFetch(teamsUrl, { headers: { Authorization: API_TOKEN } });
   if (!teamsResponse.ok) throw new Error('Failed to fetch teams/workspaces from ClickUp');
   const teamsData = await teamsResponse.json();
 
   for (const team of teamsData.teams) {
     const foldersUrl = `${BASE_URL}/team/${team.id}/folder`;
-    const foldersResponse = await fetch(foldersUrl, { headers: { Authorization: API_TOKEN } });
+    const foldersResponse = await dynFetch(foldersUrl, { headers: { Authorization: API_TOKEN } });
     if (!foldersResponse.ok) continue;
     const foldersData = await foldersResponse.json();
 
     for (const folder of foldersData.folders) {
       const listsUrl = `${BASE_URL}/folder/${folder.id}/list`;
-      const listsResponse = await fetch(listsUrl, { headers: { Authorization: API_TOKEN } });
+      const listsResponse = await dynFetch(listsUrl, { headers: { Authorization: API_TOKEN } });
       if (!listsResponse.ok) continue;
       const listsData = await listsResponse.json();
       for (const list of listsData.lists) {
