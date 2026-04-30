@@ -1,4 +1,4 @@
-Create a file called utils.js in C:\startup\projects\ai-task-executor\ with 3 utility functions: one that formats a date to "DD Month YYYY", one that truncates a string to a given length, and one that retries a failed async function up to 3 times.
+Read all the files inside C:\startup\projects\daily-tracker\, understand what the project does, and write a summary report saved as report.md in C:\startup\projects\ai-task-executor\outputs\.
 
 --- AI EXECUTION RESULT ---
-Task completed: Created file unknown.txt
+Task completed: Saved task description
