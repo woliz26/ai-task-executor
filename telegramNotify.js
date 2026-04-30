@@ -5,7 +5,6 @@ async function sendTelegramNotification(botToken, chatId, message) {
   const payload = {
     chat_id: chatId,
     text: message,
-    parse_mode: 'Markdown'
   };
   const response = await fetch(url, {
     method: 'POST',
