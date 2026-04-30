@@ -1,4 +1,4 @@
-Create a professional README.md for the ai-task-executor project. Include: project description, how it works, setup instructions, environment variables needed, and example ClickUp task format.
+Scan all folders inside C:\startup\projects\, read each project's README.md or package.json, and generate a file called projects-overview.json in C:\startup\projects\ listing each project name, description, and main technologies used.
 
 --- AI EXECUTION RESULT ---
 Task completed: Saved task description
