@@ -1,3 +1,4 @@
-Create a file called health-api.js in C:\startup\projects\ai-task-executor\outputs\ that implements a simple Express.js server on port 4000 with these routes:
-GET /health → returns { status: "ok", timestamp: current date }
-GET /ping → returns { message: "pong" }
+Create a professional README.md for the ai-task-executor project. Include: project description, how it works, setup instructions, environment variables needed, and example ClickUp task format.
+
+--- AI EXECUTION RESULT ---
+Task completed: Saved task description
