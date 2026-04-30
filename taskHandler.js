@@ -76,7 +76,6 @@ async function handleTask(task) {
   const message = `🤖 *AI Task Completed!*\n📋 *Task:* ${title}\n✅ *What I did:* ${summary}\n📁 *Output saved to:* ${outputFiles.map(f => f.path).join(', ')}\n🔗 *GitHub commit:* ${commitUrl}`;
   await sendTelegramNotification(process.env.TELEGRAM_BOT_TOKEN, process.env.TELEGRAM_CHAT_ID, message);
 
-  console.log(`Task ${task.id} completed and notified.`);
 }
 
 module.exports = { handleTask };
