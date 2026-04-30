@@ -1,6 +1,3 @@
-Create a file called startup-config.json in C:\startup\projects\ with this structure:
-
-
-json
-{  "workspace": "C:/startup/projects",  "projects": [],  "author": "woliz26",  "github": "https://github.com/woliz26",  "stack": ["Node.js", "Fastify", "Vue.js", "ClawdBot", "Hugging Face"]}
-Fill the projects array with all folder names found in C:\startup\projects\.
+Create a file called health-api.js in C:\startup\projects\ai-task-executor\outputs\ that implements a simple Express.js server on port 4000 with these routes:
+GET /health → returns { status: "ok", timestamp: current date }
+GET /ping → returns { message: "pong" }
